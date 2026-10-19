@@ -1,12 +1,11 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, Depends
 from db import database
-from models import User
+from models.models import User
+from sqlalchemy.orm import Session
 
 
-
-user_routes = FastAPI(prefix="/api/v1")
+user_routes = APIRouter(prefix="/users", tags=["Users"])
 
 @user_routes.get("/users")
-def get_users():
-    query = User.select()
-    return database.fetch_all(query)
+def get_users(db: Session = Depends(database.get_db)):
+    return db.query(User).all()
