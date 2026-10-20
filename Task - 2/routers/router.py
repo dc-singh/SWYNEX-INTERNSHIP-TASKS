@@ -4,8 +4,8 @@ from models.models import User
 from sqlalchemy.orm import Session
 
 
-user_routes = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter(prefix="/users", tags=["Users"])
 
-@user_routes.get("/users")
+@router.get("/")
 def get_users(db: Session = Depends(database.get_db)):
     return db.query(User).all()

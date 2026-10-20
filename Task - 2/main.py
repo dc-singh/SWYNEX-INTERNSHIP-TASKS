@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from db import database
-from routers.router import user_routes
+from routers.router import router
 # from models import User
 
 
 app = FastAPI()
-app.include_router(user_routes)
+app.include_router(router)
 
 
 @app.get("/")
