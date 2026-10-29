@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from src.controller import controller
+from src.utility.utils import load_json
 
 
 
@@ -9,4 +9,4 @@ user_routes = APIRouter(prefix="/users", tags=["Users"])
 
 @user_routes.get("/")
 def get_users():
-    return controller.read_local_json()
+    return load_json()
