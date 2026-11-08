@@ -1,7 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from src.utility.utils import load_json, save_file
 from src.controller.controller import one_user, delete_user as delete_user_by_id
-from src.schemas.schemas import User
+from src.schemas.schemas import User, UpdatedUser
 
 
 
@@ -34,6 +34,22 @@ def delete_user(id: int):
     return delete_user_by_id(id)
 
 
-@user_routes.post("/update_user")
-def update_user():
-    pass
+@user_routes.put("/update_user/{id}")
+def update_user(data: UpdatedUser, id: int):
+    allUsers = load_json()
+
+    if not id:
+        raise HTTPException(status_code=404, detail="Id not found")
+
+    for index, users in enumerate(allUsers):
+        if users["id"] == id:
+            changes = {}
+            for k, v in users.model_dump().items():
+                if v is not None:
+                    changes[k] = v
+
+            allUsers[index] = {"id":id, **users, **changes}
+
+            save_file(allUsers)
+            return {"message":"user updated successfully"}
+        raise HTTPException(status_code=400, detail="user not found")
