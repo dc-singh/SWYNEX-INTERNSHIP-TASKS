@@ -1,5 +1,5 @@
-from src.utility.utils import load_json
-from src.schemas.schemas import User
+from src.utility.utils import load_json, save_file
+
 
 
 def one_user(id: int):
@@ -9,3 +9,13 @@ def one_user(id: int):
             return user
     return None
 
+def delete_user(id: int):
+    data = load_json()
+
+    for index, user in enumerate(data):
+        if user["id"] == id:
+            del data[index]
+            save_file(data)
+            return {"message": "data deleted Successfully"}
+
+    return {"message": "user not found"}

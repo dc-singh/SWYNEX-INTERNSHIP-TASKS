@@ -17,9 +17,9 @@ def load_json():
         return json.load(file)
 
 
-def save_file():
+def save_file(data):
     if not os.path.exists(file_path):
             raise HTTPException(status_code=404, detail="File not found")
 
     with open(file_path, 'w') as file:
-         json.model_dump(data, file)
+         json.dump(data, file)
