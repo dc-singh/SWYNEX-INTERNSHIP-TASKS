@@ -44,7 +44,7 @@ def update_user(data: UpdatedUser, id: int):
     for index, users in enumerate(allUsers):
         if users["id"] == id:
             changes = {}
-            for k, v in users.model_dump().items():
+            for k, v in data.model_dump().items():
                 if v is not None:
                     changes[k] = v
 
@@ -52,4 +52,5 @@ def update_user(data: UpdatedUser, id: int):
 
             save_file(allUsers)
             return {"message":"user updated successfully"}
-        raise HTTPException(status_code=400, detail="user not found")
+    
+    raise HTTPException(status_code=404, detail="user not found")
