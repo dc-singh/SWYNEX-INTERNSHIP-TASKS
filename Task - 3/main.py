@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 from src.routes.routers import user_routes
+from src.utility.database import base, engine
+
+base.metadata.create_all(engine)
 
 
 app = FastAPI()
