@@ -10,8 +10,8 @@ WRITE_PERMISSION = "write"
 
 
 def authenticate_user(
-    user_id: Annotated[int, Header(alias="X-User-Id")],
-    user_name: Annotated[str, Header(alias="X-User-Name")],
+    user_id: Annotated[int, Header(alias="X-User-Id", ge=1)],
+    user_name: Annotated[str, Header(alias="X-User-Name", min_length=1, max_length=100)],
 ) -> dict:
     """Authenticate a user against the users stored in data.json.
 
@@ -20,6 +20,12 @@ def authenticate_user(
     every authenticated user is granted read access.
     """
     normalized_name = user_name.strip().casefold()
+    if not normalized_name:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid user credentials",
+            headers={"WWW-Authenticate": "User-Id User-Name"},
+        )
     user = next(
         (
             candidate

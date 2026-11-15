@@ -27,7 +27,10 @@ def get_single_user(
     _: Annotated[dict, Depends(require_permission(READ_PERMISSION))],
     id: int = 0,
 ):
-    return one_user(id)
+    user = one_user(id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
 
 @user_routes.post("/create_users")
 def create_user(
@@ -60,18 +63,15 @@ def update_user(
 ):
     allUsers = load_json()
 
-    if not id:
-        raise HTTPException(status_code=404, detail="Id not found")
+    if id < 1:
+        raise HTTPException(status_code=400, detail="Id must be a positive integer")
 
     for index, users in enumerate(allUsers):
         if users["id"] == id:
-            changes = {}
-            for k, v in users.model_dump().items():
-                if v is not None:
-                    changes[k] = v
+            changes = data.model_dump(exclude_unset=True)
 
             allUsers[index] = {"id":id, **users, **changes}
 
             save_file(allUsers)
             return {"message":"user updated successfully"}
-        raise HTTPException(status_code=400, detail="user not found")
+    raise HTTPException(status_code=404, detail="User not found")
